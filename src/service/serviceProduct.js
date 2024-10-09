@@ -4,7 +4,7 @@ export const getItems = async (navigate) => {
     try {
         if (!verifyRefreshToken(navigate))
             return
-        const response = await apiToken().get("permissions");
+        const response = await apiToken().get("products");
         return response.data;
     } catch (error) {
         console.error("Lỗi khi gọi API getItems:", error);
@@ -19,7 +19,7 @@ export const searchItems = async (navigate, keySearch, page, size) => {
             return;
         if (!verifyRefreshToken(navigate))
             return
-        const response = await apiToken().get("permissions/search?keySearch=" + keySearch + "&page=" + page + "&size=" + size);
+        const response = await apiToken().get("products/search?keySearch=" + keySearch + "&page=" + page + "&size=" + size);
         return response.data;
     } catch (error) {
         console.error("Lỗi khi gọi API searchItems:", error);
@@ -31,7 +31,7 @@ export const update = async (module, navigate) => {
     try {
         if (!verifyRefreshToken(navigate))
             return
-        const response = await apiToken().put("permissions/" + module.name, module);
+        const response = await apiToken().put("products/" + module.id, module);
         return response.data;
     } catch (error) {
         console.error("Lỗi khi gọi API update:", error);
@@ -43,7 +43,7 @@ export const create = async (module, navigate) => {
     try {
         if (!verifyRefreshToken(navigate))
             return
-        const response = await apiToken().post("permissions", module);
+        const response = await apiToken().post("products", module);
         return response.data;
     } catch (error) {
         console.error("Lỗi khi gọi API create:", error);
@@ -55,7 +55,7 @@ export const remove = async (id, navigate) => {
     try {
         if (!verifyRefreshToken(navigate))
             return
-        const response = await apiToken().delete("permissions/" + id);
+        const response = await apiToken().delete("products/" + id);
         return response.data;
     } catch (error) {
         console.error("Lỗi khi gọi API remove:", error);

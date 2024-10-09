@@ -4,7 +4,7 @@ const expTime = 15; // đơn vị phút ( thời gian còn lại để refresh t
 
 // URL gốc của API (có thể cấu hình theo ý bạn)
 // const API_BASE_URL = "http://14.225.217.118:8080/demo1";
-const API_BASE_URL = "http://localhost:8080/demo1";
+export const API_BASE_URL = "http://localhost:8080/demo1";
 
 // Cấu hình axios instance
 export const api = axios.create({
@@ -15,13 +15,36 @@ export const api = axios.create({
   },
 });
 
-export const apiToken = axios.create({
-  baseURL: API_BASE_URL,
-  timeout: 10000, // 10 giây timeout
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+// export const apiToken = axios.create({
+//   baseURL: API_BASE_URL,
+//   timeout: 10000, // 10 giây timeout
+//   headers: {
+//     "Content-Type": "application/json",
+//   },
+// });
+
+export const apiToken = () => {
+  const apiTk = axios.create({
+    baseURL: API_BASE_URL,
+    timeout: 10000, // 10 giây timeout
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  apiTk.interceptors.request.use(
+    (config) => {
+      const token = localStorage.getItem("authToken");
+      if (token) {
+        config.headers['Authorization'] = 'Bearer ' + token;
+      }
+      return config;
+    },
+    (error) => {
+      return Promise.reject(error);
+    }
+  );
+  return apiTk;
+}
 
 // verify token
 const introspect = async (tk) => {
@@ -80,3 +103,27 @@ export const verifyRefreshToken = async (navigate) => {
   }
   return true;
 }
+
+export const fetchImage = async (url) => {
+
+  const fileName = url.split('/').pop();
+  const token = localStorage.getItem("authToken"); // Nếu cần token
+  try {
+    const response = await fetch(`${API_BASE_URL}/upload/${fileName}`, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${token}`, // Nếu cần thiết
+      },
+      credentials: 'include',
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const blob = await response.blob(); // Chuyển đổi phản hồi thành blob
+    return blob; // Hoặc cách khác tùy thuộc vào cách bạn xử lý hình ảnh
+  } catch (error) {
+    console.error('Error fetching image:', error);
+  }
+};

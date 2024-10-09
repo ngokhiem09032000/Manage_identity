@@ -1,17 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { create, searchItems, remove, update } from '../../../service/serviceRole';
+import { create, searchItems, remove, update } from '../../../service/serviceProduct';
 import { MdDelete, MdEdit } from 'react-icons/md';
 import EditPage from './EditPage';
 import PopupReponse from '../../element/PopupReponse';
-import { castDate, castModule, mapModuleListRole } from '../../../tool/ToolAll';
 import { IoMdAddCircle } from 'react-icons/io';
 import Paginate from '../../element/Paginate';
 import SearchBox from '../../element/SearchBox';
+import { mapModuleListSizeColor } from '../../../tool/ToolAll';
 
-const RolePage = () => {
-
-
+const ProductPage = () => {
 
     const [modules, setModules] = useState([]);
     const navigate = useNavigate();
@@ -20,15 +18,21 @@ const RolePage = () => {
     const [popup, setPopup] = useState({ isOpen: false, message: "", type: "" });
     const [selectedModule, setSelectedModule] = useState(null);
     const createModuleData = {
+        id: '',
         name: '',
         description: '',
-        permissions: []
+        size: '',
+        color: '',
+        price: '',
+        stock: '',
+        imageUrl: '',
+        imageUrlView: ''
     }
 
     // phần paginate
     const [keySearch, setKeySearch] = useState("");
     const [selectedPage, setSelectedPage] = useState(0);
-    const itemsPerPage = 10; // Hiển thị 3 người trên mỗi trang
+    const itemsPerPage = 4; // Hiển thị 3 người trên mỗi trang
     // const totalPages = Math.ceil(modules.length / itemsPerPage);
     let totalPages = useRef(0);
 
@@ -44,7 +48,8 @@ const RolePage = () => {
             console.log(data);
             if (data && data.code === 1000 && data.result && data.result.content) {
                 totalPages.current = data.result.totalPages;
-                const transformedData = mapModuleListRole(data.result.content);
+
+                const transformedData = mapModuleListSizeColor(data.result.content);
                 setModules(transformedData);
             }
             setSelectedPage(page);
@@ -64,14 +69,20 @@ const RolePage = () => {
     };
 
     const handleAdd = () => {
+
         setSelectedModule(createModuleData);
         setIsPopupOpen(true);
         setTitleName("Create");
     };
 
-    const handleModuleUpdate = async (updatedModule, isCreate) => {
+    const handleModuleUpdate = async (updatedModule, isCreate, uploadedImageUrl) => {
+
         let reponse = "";
-        const updatedModuleCast = { ...updatedModule, permissions: updatedModule.permissions ? updatedModule.permissions.map(r => r.value) : [] };
+        const updatedModuleCast = {
+            ...updatedModule, size: updatedModule.size ? updatedModule.size.value : "S"
+            , color: updatedModule.color ? updatedModule.color.value : "None"
+            , imageUrl: uploadedImageUrl, imageUrl2: uploadedImageUrl, imageUrl3: uploadedImageUrl
+        };
         if (!isCreate) {
             reponse = await update(updatedModuleCast, navigate);
         } else {
@@ -90,7 +101,6 @@ const RolePage = () => {
     const handleDelete = async (id) => {
         // Xử lý xóa người dùng
         const reponse = await remove(id, navigate);
-
         setPopup({
             isOpen: true,
             message: reponse.message ? reponse.message : "Success!",
@@ -108,10 +118,10 @@ const RolePage = () => {
     return (
         <div className='pl-20 pr-2 h-screen bg-gray-100 pt-5'>
             <div className='text-2xl text-text bg-secondary rounded pl-3 h-16 columns-2'>
-                <h1 className='text-left font-bold' style={{ lineHeight: '4rem' }}>Manage Role</h1>
+                <h1 className='text-left font-bold' style={{ lineHeight: '4rem' }}>Manage Product</h1>
                 <div className="flex justify-center items-center h-12 mt-2 mr-2 float-end bg-green-500 rounded p-2 hover:bg-green-800" onClick={() => handleAdd()}>
                     <IoMdAddCircle size={24} className="text-white" />
-                    <span className='text-base text-white'>Create Role</span>
+                    <span className='text-base text-white'>Create Product</span>
                 </div>
                 <div className="flex justify-center items-center h-12 mt-2 mr-2 float-end p-2 ">
                     <SearchBox className='border border-text rounded-md' labelName="Search" value={keySearch || ''} onChange={(e) => {
@@ -127,9 +137,13 @@ const RolePage = () => {
                     <thead className='bg-gray-50 border-b-2 border-gray-200'>
                         <tr>
                             <th className='w-24 p-3 text-sm font-semibold tracking-wide'>No.</th>
-                            <th className='w-24 p-3 text-sm font-semibold tracking-wide'>Role name</th>
-                            <th className='w-24 p-3 text-sm font-semibold tracking-wide'>Description</th>
-                            <th className='w-24 p-3 text-sm font-semibold tracking-wide'>Permissions</th>
+                            <th className='w-24 p-3 text-sm font-semibold tracking-wide'>Product name</th>
+                            <th className='w-24 p-3 text-sm font-semibold'>Description</th>
+                            <th className='w-24 p-3 text-sm font-semibold tracking-wide'>Size</th>
+                            <th className='w-24 p-3 text-sm font-semibold tracking-wide'>Color</th>
+                            <th className='w-24 p-3 text-sm font-semibold tracking-wide'>Price</th>
+                            <th className='w-24 p-3 text-sm font-semibold tracking-wide'>Stock</th>
+                            <th className='w-24 p-3 text-sm font-semibold tracking-wide'>ImageUrl</th>
                             <th className='w-24 p-3 text-sm font-semibold tracking-wide'>Action</th>
                         </tr>
                     </thead>
@@ -140,11 +154,20 @@ const RolePage = () => {
                                     <a href="#" className="font-bold text-blue-500 hover:underline">{index + 1}</a>
                                 </td>
                                 <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{item.name || ''}</td>
-                                <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{item.description || ''}</td>
-                                <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{castModule(item.permissions)}</td>
+                                <td className='p-3 text-sm text-gray-700' >{item.description || ''}</td>
+                                <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{item.size.value || ''}</td>
+                                <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{item.color.value || ''}</td>
+                                <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{item.price || ''}</td>
+                                <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{item.stock || '0'}</td>
+                                {/* <td className='p-3 text-sm text-gray-700 whitespace-nowrap' ><ImageView imageUrl={item.imageUrl} /></td> */}
+                                <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{item.imageUrl ? (
+                                    <img className="w-20 h-20 mt-3" src={item.imageUrl} />
+                                ) : (
+                                    <span>No Image Available</span>
+                                )}</td>
                                 <td className='p-3 text-sm text-gray-700 whitespace-nowrap flex' >
                                     <MdEdit size={20} className='mr-3 hover:text-text text-yellow-400' onClick={() => handleUpdate(item)} />
-                                    <MdDelete size={20} className='mr-3 hover:text-text text-red-400' onClick={() => handleDelete(item["name"])} /></td>
+                                    <MdDelete size={20} className='mr-3 hover:text-text text-red-400' onClick={() => handleDelete(item["id"])} /></td>
                             </tr>
                         ))}
                     </tbody>
@@ -160,8 +183,12 @@ const RolePage = () => {
                             </div>
                             <div className='text-gray-500'>{item.name || ''}</div>
                             <div className='text-gray-500'>{item.description || ''}</div>
+                            <div className='text-gray-500'>{item.size.value || ''}</div>
+                            <div className='text-gray-500'>{item.color.value || ''}</div>
+                            <div className='text-gray-500'>{item.price || ''}</div>
+                            <div className='text-gray-500'>{item.stock || ''}</div>
+                            <div className='text-gray-500'>{item.imageUrl || ''}</div>
                         </div>
-                        <div className='text-sm text-gray-700'>{castModule(item.roles)}</div>
                         <div className='text-sm font-medium text-black flex'>
                             <MdEdit size={20} color='green' className='mr-3' />
                             <MdDelete color='red' size={20} />
@@ -169,7 +196,6 @@ const RolePage = () => {
                     </div>
                 ))}
             </div>
-
             <div className="flex justify-end items-cente my-3">
                 <Paginate onPageChange={handlePageChange} pageCount={totalPages.current} forcePage={selectedPage}></Paginate>
             </div>
@@ -194,4 +220,4 @@ const RolePage = () => {
     );
 };
 
-export default RolePage;
+export default ProductPage;

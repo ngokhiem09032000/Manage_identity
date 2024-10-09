@@ -22,7 +22,7 @@ const EditPage = ({ module, isOpen, onClose, onUpdate, titleName, navigate }) =>
             label: r.description,
             value: r.name
         }));
-        // debugger;
+        // 
         // const options = listDataGet && listDataGet.result ? listDataGet.result.map(r => r.name) : [];
         listRoles.current = options;
     }

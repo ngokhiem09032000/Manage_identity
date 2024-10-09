@@ -10,10 +10,10 @@ export const Sidebar = ({ children, page }) => {
 
     return (
         <aside className="absolute h-screen z-10">
-            <nav className="h-full w-fit flex flex-col bg-white border-r shadow-sm">
+            <nav className="h-full w-fit flex flex-col bg-secondary border-r shadow-sm">
                 <div className="p-4 pb-2 flex justify-between items-center">
-                    <div className={`overflow-hidden transition-all ${expanded ? "w-60 text-3xl text-purple-500" : "w-0"}`}>
-                        devchicken
+                    <div className={`overflow-hidden transition-all ${expanded ? "w-56 text-3xl text-text" : "w-0"}`}>
+                        DEVCHICKEN
                     </div>
                     <button
                         onClick={() => setExpanded((curr) => !curr)}
@@ -27,7 +27,7 @@ export const Sidebar = ({ children, page }) => {
                     <ul className="flex-1 px-3">{children}</ul>
                 </SidebarContext.Provider>
                 <div className="border-t flex p-3">
-                    <div className="w-10 h-10 rounded-md bg-purple-500 leading-10">
+                    <div className="w-10 h-10 rounded-md bg-primary leading-10">
                         DC
                     </div>
                     <div className={` flex justify-between items-center overflow-hidden transition-all ${expanded ? "w-52 ml-3" : "w-0"}`}>
