@@ -77,7 +77,6 @@ const UserPage = () => {
     const handleModuleUpdate = async (updatedModule) => {
         let reponse = "";
         const updatedModuleCast = { ...updatedModule, roles: updatedModule.roles ? updatedModule.roles.map(r => r.value) : [] };
-        debugger
         if (updatedModule.id != null) {
             reponse = await update(updatedModuleCast, navigate);
         } else {

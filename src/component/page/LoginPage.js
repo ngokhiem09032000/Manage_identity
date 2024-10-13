@@ -66,17 +66,9 @@ const LoginPage = () => {
     };
     return (
         <div className="w-full min-h-screen flex">
-            {/* Nửa bên trái có background */}
-            <div className="hidden md:flex w-1/2  h-screen bg-primary items-center justify-center">
-                <div className="text-center">
-                    <Logo name="devchicken"></Logo>
-                </div>
-            </div>
-
-            {/* Nửa bên phải không có background */}
-            <div className="w-full md:w-1/2 h-screen flex items-center justify-center bg-secondary">
-                <div className="md:hidden max-sm:hidden absolute top-10">
-                    <Logo name="devchicken"></Logo>
+            <div className="w-full md:w-full h-screen flex items-center justify-center bg-secondary">
+                <div className="absolute top-20">
+                    <Logo name="DEVCHICKEN"></Logo>
                 </div>
                 <div className="w-96 p-8 bg-background shadow-lg rounded-lg">
                     <h2 className="text-2xl font-semibold text-center mb-6 text-primary">

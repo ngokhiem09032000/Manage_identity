@@ -12,8 +12,8 @@ export const Sidebar = ({ children, page }) => {
         <aside className="absolute h-screen z-10">
             <nav className="h-full w-fit flex flex-col bg-secondary border-r shadow-sm">
                 <div className="p-4 pb-2 flex justify-between items-center">
-                    <div className={`overflow-hidden transition-all ${expanded ? "w-56 text-3xl text-text" : "w-0"}`}>
-                        DEVCHICKEN
+                    <div className={`overflow-hidden transition-all ${expanded ? "w-40 ml-10" : "w-0"}`}>
+                        <Logo name="DEVCHICKEN"></Logo>
                     </div>
                     <button
                         onClick={() => setExpanded((curr) => !curr)}

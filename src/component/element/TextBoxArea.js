@@ -1,12 +1,12 @@
 import React from 'react';
 import Required from './Required';
 
-const TextBox = ({ value, onChange, labelName, className, disabled, error, isRequired }) => {
+const TextBoxArea = ({ value, onChange, labelName, className, disabled, error, isRequired, rows }) => {
     return (
         <div className={className}>
             <div className="w-full">
                 <div className="relative">
-                    <input onChange={onChange} value={value} disabled={disabled}
+                    <textarea onChange={onChange} value={value} disabled={disabled} rows={rows}
                         className={`w-full p-2 border rounded ${error ? "border-red-500" : "border-gray-300"
                             } rounded-md focus:outline-none focus:ring-2 ${error ? "focus:ring-red-500" : "focus:ring-blue-500"
                             }`}
@@ -22,4 +22,4 @@ const TextBox = ({ value, onChange, labelName, className, disabled, error, isReq
     );
 };
 
-export default TextBox;
+export default TextBoxArea;

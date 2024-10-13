@@ -127,3 +127,27 @@ export const fetchImage = async (url) => {
     console.error('Error fetching image:', error);
   }
 };
+
+export const deleteFile = async (fileName) => {
+  const token = localStorage.getItem("authToken");
+
+  try {
+    const response = await fetch(`${API_BASE_URL}/upload/${fileName}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    // Kiểm tra xem phản hồi có thành công không
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const data = await response.json();
+    console.log('File deleted successfully:', data);
+
+  } catch (error) {
+    console.error('Error deleting file:', error);
+  }
+};

@@ -7,16 +7,21 @@ import PopupReponse from '../../element/PopupReponse';
 import { IoMdAddCircle } from 'react-icons/io';
 import Paginate from '../../element/Paginate';
 import SearchBox from '../../element/SearchBox';
-import { mapModuleListSizeColor } from '../../../tool/ToolAll';
+import { convertVnd, mapModuleListSizeColor } from '../../../tool/ToolAll';
+import { deleteFile } from '../../../service/apiService';
+import { FaWarehouse } from 'react-icons/fa';
+import EditSizeStockPage from './EditSizeStockPage';
 
 const ProductPage = () => {
 
     const [modules, setModules] = useState([]);
     const navigate = useNavigate();
     const [isPopupOpen, setIsPopupOpen] = useState(false);
+    const [isPopupOpenSAS, setIsPopupOpenSAS] = useState(false); // is open page size and stock
     const [titleName, setTitleName] = useState("");
     const [popup, setPopup] = useState({ isOpen: false, message: "", type: "" });
     const [selectedModule, setSelectedModule] = useState(null);
+    const [selectedModuleSAS, setSelectedModuleSAS] = useState(null);
     const createModuleData = {
         id: '',
         name: '',
@@ -75,13 +80,15 @@ const ProductPage = () => {
         setTitleName("Create");
     };
 
-    const handleModuleUpdate = async (updatedModule, isCreate, uploadedImageUrl) => {
-
+    const handleModuleUpdate = async (updatedModule, isCreate, uploadedImageUrl, urlImageBefore) => {
         let reponse = "";
         const updatedModuleCast = {
-            ...updatedModule, size: updatedModule.size ? updatedModule.size.value : "S"
+            ...updatedModule
+            // , size: updatedModule.size ? updatedModule.size.value : "S"
             , color: updatedModule.color ? updatedModule.color.value : "None"
-            , imageUrl: uploadedImageUrl, imageUrl2: uploadedImageUrl, imageUrl3: uploadedImageUrl
+            , imageUrl: uploadedImageUrl === "" ? updatedModule.imageUrl : uploadedImageUrl
+            , imageUrl2: uploadedImageUrl === "" ? updatedModule.imageUrl : uploadedImageUrl
+            , imageUrl3: uploadedImageUrl === "" ? updatedModule.imageUrl : uploadedImageUrl
         };
         if (!isCreate) {
             reponse = await update(updatedModuleCast, navigate);
@@ -94,11 +101,16 @@ const ProductPage = () => {
             type: reponse.message ? "error" : "success",
             closeButton: false,
         });
+
+        if (reponse && reponse.code && reponse.code === 1000 && urlImageBefore) {
+            const imageRemove = urlImageBefore.split('/').pop();
+            deleteFile(imageRemove);
+        }
         setKeySearch("");
         fetchModules("", 0);
     };
 
-    const handleDelete = async (id) => {
+    const handleDelete = async (id, url) => {
         // Xử lý xóa người dùng
         const reponse = await remove(id, navigate);
         setPopup({
@@ -107,12 +119,51 @@ const ProductPage = () => {
             type: reponse.message ? "error" : "success",
             closeButton: false,
         });
+        if (reponse && reponse.code && reponse.code === 1000) {
+            const imageRemove = url.split('/').pop();
+            deleteFile(imageRemove);
+        }
         setKeySearch("");
         fetchModules("", 0);
     };
 
     const handleClosePopup = () => {
         setPopup({ ...popup, isOpen: false });
+    };
+
+    const handleUpdateSAS = (module) => {
+        setSelectedModuleSAS(module);  // Chọn người dùng cần sửa
+        setIsPopupOpenSAS(true);
+    };
+
+    const handleModuleUpdateSAS = async (updatedModule, isCreate, uploadedImageUrl, urlImageBefore) => {
+        // let reponse = "";
+        // const updatedModuleCast = {
+        //     ...updatedModule
+        //     // , size: updatedModule.size ? updatedModule.size.value : "S"
+        //     , color: updatedModule.color ? updatedModule.color.value : "None"
+        //     , imageUrl: uploadedImageUrl === "" ? updatedModule.imageUrl : uploadedImageUrl
+        //     , imageUrl2: uploadedImageUrl === "" ? updatedModule.imageUrl : uploadedImageUrl
+        //     , imageUrl3: uploadedImageUrl === "" ? updatedModule.imageUrl : uploadedImageUrl
+        // };
+        // if (!isCreate) {
+        //     reponse = await update(updatedModuleCast, navigate);
+        // } else {
+        //     reponse = await create(updatedModuleCast, navigate);
+        // }
+        // setPopup({
+        //     isOpen: true,
+        //     message: reponse.message ? reponse.message : "Success!",
+        //     type: reponse.message ? "error" : "success",
+        //     closeButton: false,
+        // });
+        // 
+        // if (reponse && reponse.code && reponse.code === 1000 && urlImageBefore) {
+        //     const imageRemove = urlImageBefore.split('/').pop();
+        //     deleteFile(imageRemove);
+        // }
+        // setKeySearch("");
+        // fetchModules("", 0);
     };
 
     return (
@@ -139,10 +190,10 @@ const ProductPage = () => {
                             <th className='w-24 p-3 text-sm font-semibold tracking-wide'>No.</th>
                             <th className='w-24 p-3 text-sm font-semibold tracking-wide'>Product name</th>
                             <th className='w-24 p-3 text-sm font-semibold'>Description</th>
-                            <th className='w-24 p-3 text-sm font-semibold tracking-wide'>Size</th>
                             <th className='w-24 p-3 text-sm font-semibold tracking-wide'>Color</th>
+                            {/* <th className='w-24 p-3 text-sm font-semibold tracking-wide'>Color</th> */}
                             <th className='w-24 p-3 text-sm font-semibold tracking-wide'>Price</th>
-                            <th className='w-24 p-3 text-sm font-semibold tracking-wide'>Stock</th>
+                            {/* <th className='w-24 p-3 text-sm font-semibold tracking-wide'>Stock</th> */}
                             <th className='w-24 p-3 text-sm font-semibold tracking-wide'>ImageUrl</th>
                             <th className='w-24 p-3 text-sm font-semibold tracking-wide'>Action</th>
                         </tr>
@@ -155,19 +206,21 @@ const ProductPage = () => {
                                 </td>
                                 <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{item.name || ''}</td>
                                 <td className='p-3 text-sm text-gray-700' >{item.description || ''}</td>
-                                <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{item.size.value || ''}</td>
+                                {/* <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{item.size.value || ''}</td> */}
                                 <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{item.color.value || ''}</td>
-                                <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{item.price || ''}</td>
-                                <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{item.stock || '0'}</td>
+                                <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{convertVnd(item.price || '')}</td>
+                                {/* <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{item.stock || '0'}</td> */}
                                 {/* <td className='p-3 text-sm text-gray-700 whitespace-nowrap' ><ImageView imageUrl={item.imageUrl} /></td> */}
                                 <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{item.imageUrl ? (
                                     <img className="w-20 h-20 mt-3" src={item.imageUrl} />
                                 ) : (
                                     <span>No Image Available</span>
                                 )}</td>
-                                <td className='p-3 text-sm text-gray-700 whitespace-nowrap flex' >
-                                    <MdEdit size={20} className='mr-3 hover:text-text text-yellow-400' onClick={() => handleUpdate(item)} />
-                                    <MdDelete size={20} className='mr-3 hover:text-text text-red-400' onClick={() => handleDelete(item["id"])} /></td>
+                                <td className='p-3' >
+                                    <button type='button'><MdEdit size={30} className='mr-3 hover:text-text text-yellow-400' onClick={() => handleUpdate(item)} /></button>
+                                    <button type='button'><MdDelete size={30} className='mr-3 hover:text-text text-red-400' onClick={() => handleDelete(item["id"], item.imageUrl)} /></button>
+                                    <button type='button'><FaWarehouse size={30} className='mr-3 hover:text-text text-green-400' onClick={() => handleUpdateSAS(item)} /></button>
+                                </td>
                             </tr>
                         ))}
                     </tbody>
@@ -183,7 +236,7 @@ const ProductPage = () => {
                             </div>
                             <div className='text-gray-500'>{item.name || ''}</div>
                             <div className='text-gray-500'>{item.description || ''}</div>
-                            <div className='text-gray-500'>{item.size.value || ''}</div>
+                            {/* <div className='text-gray-500'>{item.size.value || ''}</div> */}
                             <div className='text-gray-500'>{item.color.value || ''}</div>
                             <div className='text-gray-500'>{item.price || ''}</div>
                             <div className='text-gray-500'>{item.stock || ''}</div>
@@ -206,6 +259,12 @@ const ProductPage = () => {
                 onUpdate={handleModuleUpdate}
                 titleName={titleName}
                 navigate={navigate}
+            />
+            <EditSizeStockPage
+                module={selectedModuleSAS}
+                isOpen={isPopupOpenSAS}
+                onClose={() => setIsPopupOpenSAS(false)}
+                onUpdate={handleModuleUpdateSAS}
             />
             {popup.isOpen && (
                 <PopupReponse

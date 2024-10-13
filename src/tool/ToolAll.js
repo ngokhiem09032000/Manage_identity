@@ -68,3 +68,8 @@ export const checkRole = () => {
         return true;
     return false;
 }
+
+export function convertVnd(price) {
+    const formattedNumber = price.toLocaleString('vi-VN') + ' đ';
+    return formattedNumber;
+}
