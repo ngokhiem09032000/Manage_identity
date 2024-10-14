@@ -145,12 +145,8 @@ const UserPage = () => {
                                     <a href="#" className="font-bold text-blue-500 hover:underline">{index + 1}</a>
                                 </td>
                                 <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{item.userName || ''}</td>
-                                <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >
-                                    <span className='p-1.5 text-xs font-medium uppercase tracking-wider text-yellow-800 bg-yellow-200 rounded-lg bg-opacity-50' >{item.fullName || ''}</span>
-                                </td>
-                                <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >
-                                    <span className='p-1.5 text-xs font-medium uppercase tracking-wider text-yellow-800 bg-yellow-200 rounded-lg bg-opacity-50' >{castDate(item.birthDate || '')}</span>
-                                </td>
+                                <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{item.fullName || ''}</td>
+                                <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{castDate(item.birthDate || '')}</td>
                                 <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{castModule(item.roles)}</td>
                                 <td className='p-3 text-sm text-gray-700 whitespace-nowrap flex' >
                                     <MdEdit size={20} className='mr-3 hover:text-text text-yellow-400' onClick={() => handleUpdate(item)} />

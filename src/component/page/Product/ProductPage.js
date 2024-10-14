@@ -26,12 +26,11 @@ const ProductPage = () => {
         id: '',
         name: '',
         description: '',
-        size: '',
         color: '',
         price: '',
-        stock: '',
         imageUrl: '',
-        imageUrlView: ''
+        imageUrl2: '',
+        imageUrl3: ''
     }
 
     // phần paginate
@@ -80,16 +79,18 @@ const ProductPage = () => {
         setTitleName("Create");
     };
 
-    const handleModuleUpdate = async (updatedModule, isCreate, uploadedImageUrl, urlImageBefore) => {
+    const handleModuleUpdate = async (updatedModule, isCreate, uploadedImageUrl, uploadedImageUrl2, uploadedImageUrl3, urlImageBefore, urlImageBefore2, urlImageBefore3) => {
         let reponse = "";
         const updatedModuleCast = {
             ...updatedModule
             // , size: updatedModule.size ? updatedModule.size.value : "S"
+            , price: updatedModule.price ? Number(updatedModule.price) : 0
             , color: updatedModule.color ? updatedModule.color.value : "None"
             , imageUrl: uploadedImageUrl === "" ? updatedModule.imageUrl : uploadedImageUrl
-            , imageUrl2: uploadedImageUrl === "" ? updatedModule.imageUrl : uploadedImageUrl
-            , imageUrl3: uploadedImageUrl === "" ? updatedModule.imageUrl : uploadedImageUrl
+            , imageUrl2: uploadedImageUrl2 === "" ? updatedModule.imageUrl2 : uploadedImageUrl2
+            , imageUrl3: uploadedImageUrl3 === "" ? updatedModule.imageUrl3 : uploadedImageUrl3
         };
+        debugger;
         if (!isCreate) {
             reponse = await update(updatedModuleCast, navigate);
         } else {
@@ -104,6 +105,14 @@ const ProductPage = () => {
 
         if (reponse && reponse.code && reponse.code === 1000 && urlImageBefore) {
             const imageRemove = urlImageBefore.split('/').pop();
+            deleteFile(imageRemove);
+        }
+        if (reponse && reponse.code && reponse.code === 1000 && urlImageBefore2) {
+            const imageRemove = urlImageBefore2.split('/').pop();
+            deleteFile(imageRemove);
+        }
+        if (reponse && reponse.code && reponse.code === 1000 && urlImageBefore3) {
+            const imageRemove = urlImageBefore3.split('/').pop();
             deleteFile(imageRemove);
         }
         setKeySearch("");
@@ -208,7 +217,7 @@ const ProductPage = () => {
                                 <td className='p-3 text-sm text-gray-700' >{item.description || ''}</td>
                                 {/* <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{item.size.value || ''}</td> */}
                                 <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{item.color.value || ''}</td>
-                                <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{convertVnd(item.price || '')}</td>
+                                <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{convertVnd(item.price || '0')}</td>
                                 {/* <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{item.stock || '0'}</td> */}
                                 {/* <td className='p-3 text-sm text-gray-700 whitespace-nowrap' ><ImageView imageUrl={item.imageUrl} /></td> */}
                                 <td className='p-3 text-sm text-gray-700 whitespace-nowrap' >{item.imageUrl ? (

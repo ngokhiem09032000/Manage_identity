@@ -63,12 +63,18 @@ const EditPage = ({ module, isOpen, onClose, onUpdate, titleName, navigate }) =>
 
     // const [image, setImage] = useState(null);
     let fileImage = useRef();
+    let fileImage2 = useRef();
+    let fileImage3 = useRef();
     let urlImageBefore = useRef(); // đường dẫn ảnh đã được chọn từ trước
+    let urlImageBefore2 = useRef();
+    let urlImageBefore3 = useRef();
 
     useEffect(() => {
         if (module) {
             setModuleUpdate({ ...module });
             urlImageBefore.current = module.imageUrl;
+            urlImageBefore2.current = module.imageUrl2;
+            urlImageBefore3.current = module.imageUrl3;
         }
     }, [module]);
 
@@ -104,6 +110,8 @@ const EditPage = ({ module, isOpen, onClose, onUpdate, titleName, navigate }) =>
             // phần lưu image
             const formData = new FormData();
             formData.append('image', fileImage.current);
+            formData.append('image2', fileImage2.current);
+            formData.append('image3', fileImage3.current);
             const token = localStorage.getItem("authToken");
 
             try {
@@ -118,17 +126,25 @@ const EditPage = ({ module, isOpen, onClose, onUpdate, titleName, navigate }) =>
 
                 // Kiểm tra xem phản hồi có thành công không
                 if (!response.ok) {
-                    onUpdate(moduleUpdate, titleName === 'Create' ? true : false, "", null);
+                    onUpdate(moduleUpdate, titleName === 'Create' ? true : false, "", "", "", null, null, null);
                     fileImage.current = "";
+                    fileImage2.current = "";
+                    fileImage3.current = "";
                     setErrors({});
                     onClose();
                 } else {
                     const data = await response.json();
                     const uploadedImageUrl = data.url; // Lưu trữ URL của hình ảnh đã tải lên
+                    const uploadedImageUrl2 = data.url2; // Lưu trữ URL của hình ảnh đã tải lên
+                    const uploadedImageUrl3 = data.url3; // Lưu trữ URL của hình ảnh đã tải lên
                     const uploadedImageUrlReplace = uploadedImageUrl.replace("/uploads/", "/demo1/upload/"); // Lưu trữ URL của hình ảnh đã tải lên
+                    const uploadedImageUrlReplace2 = uploadedImageUrl2.replace("/uploads/", "/demo1/upload/"); // Lưu trữ URL của hình ảnh đã tải lên
+                    const uploadedImageUrlReplace3 = uploadedImageUrl3.replace("/uploads/", "/demo1/upload/"); // Lưu trữ URL của hình ảnh đã tải lên
                     // Sau khi tải hình ảnh thành công, gọi hàm cập nhật
-                    onUpdate(moduleUpdate, titleName === 'Create' ? true : false, uploadedImageUrlReplace, urlImageBefore.current);
+                    onUpdate(moduleUpdate, titleName === 'Create' ? true : false, uploadedImageUrlReplace, uploadedImageUrlReplace2, uploadedImageUrlReplace3, urlImageBefore.current, urlImageBefore2.current, urlImageBefore3.current);
                     fileImage.current = "";
+                    fileImage2.current = "";
+                    fileImage3.current = "";
                     setErrors({});
                     onClose();
                 }
@@ -141,7 +157,7 @@ const EditPage = ({ module, isOpen, onClose, onUpdate, titleName, navigate }) =>
 
     return (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-20">
-            <div className="bg-white p-6 rounded-md shadow-lg w-1/2">
+            <div className="bg-white p-6 rounded-md shadow-lg w-3/4">
                 <h2 className="text-xl font-bold mb-4">{titleName} Product</h2>
                 <form onSubmit={handleSubmit}>
                     <div className="mb-4 grid grid-cols-2">
@@ -160,12 +176,6 @@ const EditPage = ({ module, isOpen, onClose, onUpdate, titleName, navigate }) =>
                                 error={errors.color} isRequired labelName="Color" onChange={(e) => {
                                     setModuleUpdate({ ...moduleUpdate, color: e })
                                 }} options={colors} placeholder="Select color"></SelectCus>
-
-                            {/* <SelectCus className='mb-2 mt-1' value={moduleUpdate.size || ''}
-                                error={errors.size} labelName="Size" isRequired isMulti onChange={(e) => {
-                                    
-                                    setModuleUpdate({ ...moduleUpdate, size: e })
-                                }} options={sizes} placeholder="Select size"></SelectCus> */}
                         </div>
                         <div className='ml-1'>
                             <TextBoxArea className='mb-2 mt-1' value={moduleUpdate.description || ''} rows={5}
@@ -174,22 +184,8 @@ const EditPage = ({ module, isOpen, onClose, onUpdate, titleName, navigate }) =>
                                 }}></TextBoxArea>
                         </div>
                     </div>
-                    {/* <div className='mb-4'>
-                        {moduleUpdate.size && moduleUpdate.size.map((item, index) => (
-                            <div key={index} className='flex'>
-                                <div className='flex justify-center items-center w-1/2'>
-                                    {item.label}
-                                </div>
-                                <div className='w-1/2'>
-                                    <IntBox className='mb-2 mt-1' value={item.stock || ''} labelName={item.label + " Stock"} isRequired onChange={(e) => {
-                                        setModuleUpdate({ ...moduleUpdate, stock: e.target.value })
-                                    }}></IntBox>
-                                </div>
-                            </div>
-                        ))}
-                    </div> */}
-                    <div className='mb-4'>
-                        <ImageChoose className='mb-2 mt-1' labelName="ImageUrl" input={moduleUpdate.imageUrl} image={moduleUpdate.imageUrl} onChange={(e) => {
+                    <div className='flex mb-4 space-x-2'>
+                        <ImageChoose className='w-2/6 mb-2 mt-1' labelName="ImageUrl" input={moduleUpdate.imageUrl} image={moduleUpdate.imageUrl} onChange={(e) => {
 
                             if (e.target && e.target.files.length > 0) {
                                 fileImage.current = e.target.files[0];
@@ -200,6 +196,28 @@ const EditPage = ({ module, isOpen, onClose, onUpdate, titleName, navigate }) =>
                             }
                             // setModuleUpdate({ ...moduleUpdate, imageUrl: e.target.value || '', imageUrl2: e.target.value || '', imageUrl3: e.target.value || '' })
                         }}></ImageChoose>
+                        <ImageChoose className='w-2/6 mb-2 mt-1' labelName="ImageUrl2" input={moduleUpdate.imageUrl2} image={moduleUpdate.imageUrl2} onChange={(e) => {
+
+                            if (e.target && e.target.files.length > 0) {
+                                fileImage2.current = e.target.files[0];
+                                setModuleUpdate({ ...moduleUpdate, imageUrl2: URL.createObjectURL(e.target.files[0]) })
+                            } else if (e[0]) {
+                                fileImage2.current = e[0];
+                                setModuleUpdate({ ...moduleUpdate, imageUrl2: URL.createObjectURL(e[0]) })
+                            }
+                            // setModuleUpdate({ ...moduleUpdate, imageUrl: e.target.value || '', imageUrl2: e.target.value || '', imageUrl3: e.target.value || '' })
+                        }}></ImageChoose>
+                        <ImageChoose className='w-2/6 mb-2 mt-1' labelName="ImageUrl3" input={moduleUpdate.imageUrl3} image={moduleUpdate.imageUrl3} onChange={(e) => {
+
+                            if (e.target && e.target.files.length > 0) {
+                                fileImage3.current = e.target.files[0];
+                                setModuleUpdate({ ...moduleUpdate, imageUrl3: URL.createObjectURL(e.target.files[0]) })
+                            } else if (e[0]) {
+                                fileImage3.current = e[0];
+                                setModuleUpdate({ ...moduleUpdate, imageUrl3: URL.createObjectURL(e[0]) })
+                            }
+                            // setModuleUpdate({ ...moduleUpdate, imageUrl: e.target.value || '', imageUrl2: e.target.value || '', imageUrl3: e.target.value || '' })
+                        }}></ImageChoose>
                     </div>
                     <div className="flex justify-end space-x-2 mt-10">
                         <button
@@ -207,6 +225,8 @@ const EditPage = ({ module, isOpen, onClose, onUpdate, titleName, navigate }) =>
                             className="bg-button text-white px-4 py-2 rounded hover:bg-accent"
                             onClick={() => {
                                 fileImage.current = "";
+                                fileImage2.current = "";
+                                fileImage3.current = "";
                                 setErrors({});
                                 onClose();
                             }}

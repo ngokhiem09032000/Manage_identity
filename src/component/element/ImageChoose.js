@@ -42,10 +42,10 @@ const ImageChoose = ({ onChange, labelName, className, disabled, image }) => {
             <div className="w-full border border-gray-300 rounded-md">
                 <div className='grid grid-cols-2 p-2'>
                     <div className='flex justify-center items-center'>
-                        <label htmlFor="file-upload" className="cursor-pointer peer bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none  hover:border-slate-300 shadow-sm focus:shadow focus:ring-1 focus:ring-blue-500">
-                            Chọn tệp {labelName}
+                        <label htmlFor={labelName} className="cursor-pointer peer bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none  hover:border-slate-300 shadow-sm focus:shadow focus:ring-1 focus:ring-blue-500">
+                            Chọn ảnh
                         </label>
-                        <input id="file-upload" onChange={onChange} disabled={disabled} type='file' alt="Uploaded" accept="image/png, image/jpeg, image/jpg, image/gif"
+                        <input id={labelName} onChange={onChange} disabled={disabled} type='file' alt="Uploaded" accept="image/png, image/jpeg, image/jpg, image/gif"
                             className="peer w-full bg-transparent placeholder:text-slate-400 text-slate-700 text-sm border border-slate-200 rounded-md px-3 py-2 transition duration-300 ease focus:outline-none  hover:border-slate-300 shadow-sm focus:shadow focus:ring-1 focus:ring-blue-500 hidden"
                         />
                     </div>
