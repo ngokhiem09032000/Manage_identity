@@ -137,9 +137,9 @@ const EditPage = ({ module, isOpen, onClose, onUpdate, titleName, navigate }) =>
                     const uploadedImageUrl = data.url; // Lưu trữ URL của hình ảnh đã tải lên
                     const uploadedImageUrl2 = data.url2; // Lưu trữ URL của hình ảnh đã tải lên
                     const uploadedImageUrl3 = data.url3; // Lưu trữ URL của hình ảnh đã tải lên
-                    const uploadedImageUrlReplace = uploadedImageUrl.replace("/uploads/", "/demo1/upload/"); // Lưu trữ URL của hình ảnh đã tải lên
-                    const uploadedImageUrlReplace2 = uploadedImageUrl2.replace("/uploads/", "/demo1/upload/"); // Lưu trữ URL của hình ảnh đã tải lên
-                    const uploadedImageUrlReplace3 = uploadedImageUrl3.replace("/uploads/", "/demo1/upload/"); // Lưu trữ URL của hình ảnh đã tải lên
+                    const uploadedImageUrlReplace = API_BASE_URL + "/upload/" + uploadedImageUrl.split('/').pop(); // Lưu trữ URL của hình ảnh đã tải lên
+                    const uploadedImageUrlReplace2 = API_BASE_URL + "/upload/" + uploadedImageUrl2.split('/').pop(); // Lưu trữ URL của hình ảnh đã tải lên
+                    const uploadedImageUrlReplace3 = API_BASE_URL + "/upload/" + uploadedImageUrl3.split('/').pop(); // Lưu trữ URL của hình ảnh đã tải lên
                     // Sau khi tải hình ảnh thành công, gọi hàm cập nhật
                     onUpdate(moduleUpdate, titleName === 'Create' ? true : false, uploadedImageUrlReplace, uploadedImageUrlReplace2, uploadedImageUrlReplace3, urlImageBefore.current, urlImageBefore2.current, urlImageBefore3.current);
                     fileImage.current = "";

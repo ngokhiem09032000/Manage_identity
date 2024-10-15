@@ -4,7 +4,7 @@ const expTime = 15; // đơn vị phút ( thời gian còn lại để refresh t
 
 // URL gốc của API (có thể cấu hình theo ý bạn)
 // const API_BASE_URL = "http://14.225.217.118:8080/demo1";
-export const API_BASE_URL = "http://localhost:8080/demo1";
+export const API_BASE_URL = "http://14.225.217.118:8080/demo1";
 
 // Cấu hình axios instance
 export const api = axios.create({
